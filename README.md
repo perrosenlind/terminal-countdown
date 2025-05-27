@@ -2,6 +2,12 @@
 
 A feature-rich terminal countdown timer with large digits, animations, and special effects. Perfect for presentations, timing breaks, or any situation where you need a visually impressive countdown.
 
+## Demo
+
+![Terminal Countdown Demo](countdown.gif)
+
+*The final 12 seconds of the countdown showing the rock concert animations, color cycling, and completion fireworks.*
+
 ## Features
 
 - **Large, visible digits** that automatically scale to your terminal size
@@ -70,4 +76,4 @@ When the countdown reaches zero:
 - Rich library (for terminal formatting)
 - Pyfiglet library (for ASCII art text)
 - A terminal with color support
-- Recommended: A large terminal window for the best visual experience# terminal-countdown
+- Recommended: A large terminal window for the best visual experience
