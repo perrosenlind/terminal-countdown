@@ -367,14 +367,96 @@ def get_fireworks_art():
     ]
     return fireworks
 
+def simple_countdown(duration_seconds):
+    """Run a simple countdown timer with basic text output."""
+    console = Console()
+    end_time = time.time() + duration_seconds
+    
+    # Calculate the maximum width needed for the display (same as main countdown)
+    starting_time = format_time(duration_seconds)
+    font = get_optimal_figlet_font(console.width, starting_time)
+    fig = pyfiglet.Figlet(font=font)
+    
+    # Create sample displays for both the longest possible time and the current time
+    max_time = "00:00:00" if ":" in starting_time and len(starting_time) > 5 else "00:00"
+    max_width_art = fig.renderText(max_time)
+    max_width = max(len(line) for line in max_width_art.split('\n'))
+    
+    try:
+        while True:
+            remaining = max(0, int(end_time - time.time()))
+            if remaining <= 0:
+                break
+                
+            # Clear screen
+            console.clear()
+            
+            time_str = format_time(remaining)
+            
+            # Generate large ASCII art for the time using the SAME font every time
+            ascii_art = fig.renderText(time_str)
+            
+            # Simple styling without the extra effects
+            styled_text = Text(ascii_art, style="bold bright_cyan")
+            title = "COUNTDOWN"
+            border_style = "bright_blue"
+            
+            # Create panel with the countdown with FIXED width
+            panel = Panel(
+                Align.center(styled_text),
+                box=box.ROUNDED,
+                border_style=border_style,
+                padding=(1, 2),
+                title=title,
+                title_align="center",
+                width=max_width + 10
+            )
+            
+            # Center the panel in the terminal
+            console.print(Align.center(panel, vertical="middle"))
+            
+            time.sleep(1)
+            
+        # Simple completion message without fireworks
+        console.clear()
+        try:
+            fig = pyfiglet.Figlet(font="big")
+            big_complete = fig.renderText("DONE!")
+            
+            completed_text = Text(big_complete, style="bold bright_green")
+            completed_panel = Panel(
+                Align.center(completed_text),
+                box=box.ROUNDED,
+                border_style="green",
+                padding=(2, 4),
+                title="Time's Up",
+                title_align="center"
+            )
+            
+            console.print(Align.center(completed_panel, vertical="middle"))
+        except:
+            console.print(f"\n\n\n\nDONE!", style="bold bright_green", justify="center")
+        
+        console.bell()
+        
+    except KeyboardInterrupt:
+        console.clear()
+        console.print("Countdown interrupted.", style="yellow")
+        sys.exit(0)
+
 def main():
     parser = argparse.ArgumentParser(description='Terminal countdown timer with Rich formatting.')
     parser.add_argument('time', help='Time to countdown in format like "10m", "2h", "30s"')
+    parser.add_argument('--simple', '-s', action='store_true', 
+                       help='Use simple text display instead of fancy ASCII art')
     args = parser.parse_args()
     
     try:
         duration = parse_time(args.time)
-        countdown(duration)
+        if args.simple:
+            simple_countdown(duration)
+        else:
+            countdown(duration)
     except ValueError as e:
         console = Console()
         console.print(f"[red]Error:[/red] {e}")
